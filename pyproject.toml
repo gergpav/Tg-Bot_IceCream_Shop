@@ -15,7 +15,9 @@ dependencies = [
     "types-psycopg2 (>=2.9.21.20250516,<3.0.0.0)",
     "sqlalchemy[asyncio] (>=2.0.41,<3.0.0)",
     "ptbcontrib[roles] @ git+https://github.com/python-telegram-bot/ptbcontrib.git@main",
-    "uvicorn (>=0.35.0,<0.36.0)"
+    "uvicorn (>=0.35.0,<0.36.0)",
+    "sqladmin (>=0.20.1,<0.21.0)",
+    "itsdangerous (>=2.2.0,<3.0.0)"
 ]
 
 [build-system]

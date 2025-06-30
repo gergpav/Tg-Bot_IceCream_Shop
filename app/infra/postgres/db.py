@@ -31,3 +31,7 @@ class Database:
         except Exception:
             await session.rollback()
             raise
+
+    @property
+    def engine(self):
+        return self._engine
