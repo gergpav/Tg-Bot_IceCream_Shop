@@ -24,9 +24,10 @@ class OrderRepository:
     async def create_order(self, user_id: int) -> int:
         async with self.database.session() as session:
             insert_stmt = insert(Order).values(user_id=user_id, status=OrderStatusEnum.unlisted)
-            order_id = await session.execute(insert_stmt)
+            result = await session.execute(insert_stmt)
             await session.commit()
-            return order_id.scalar()
+            order_id = result.inserted_primary_key[0]
+            return order_id
 
     async def get_order_by_id(self, order_id: int) -> Order | None:
         async with self.database.session() as session:
