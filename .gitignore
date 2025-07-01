@@ -3,3 +3,5 @@ JetBrains
 Python
 .idea/
 /settings/.envs/.env
+alembic.ini
+/alembic
