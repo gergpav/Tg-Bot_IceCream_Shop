@@ -1,6 +1,7 @@
 import uvicorn
 from app.admin.authentication import AdminAuthenticationBackend
-from app.admin.views import UserAdmin
+from app.admin.views import UserAdmin, ProductAdmin, OrderAdmin
+from app.core.orders.models import Product, Order
 from app.infra.postgres.base import Base
 from app.infra.postgres.db import Database
 from settings.config import AppSettings
@@ -22,6 +23,8 @@ class AdminApplication:
 
     def _register_views(self) -> None:
         self.admin.add_view(UserAdmin)
+        self.admin.add_view(ProductAdmin)
+        self.admin.add_view(OrderAdmin)
 
 
 def create_app() -> Starlette:
