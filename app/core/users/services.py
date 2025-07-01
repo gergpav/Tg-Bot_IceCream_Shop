@@ -18,3 +18,6 @@ class UserService:
             case _:
                 raise ValueError("Unable to fetch user ids for role", role)
 
+    async def get_waiter_user_ids(self) -> list[int]:
+        return await self.get_user_ids_for_role(RolesEnum.waiter)
+

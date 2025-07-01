@@ -2,6 +2,8 @@ import logging
 
 from telegram.ext import Application as PTBApplication, ApplicationBuilder
 
+from app.core.orders.repositories import OrderRepository, ProductRepository
+from app.core.orders.services import OrderService, ProductService
 from app.core.users.constants import RolesEnum
 from app.core.users.repositories import UserRepository
 from app.core.users.services import UserService
@@ -22,6 +24,12 @@ class Application(PTBApplication):
 
         user_repository = UserRepository(database=self.database)
         self.user_service = UserService(repository=user_repository)
+
+        product_repository = ProductRepository(database=self.database)
+        self.product_service = ProductService(repository=product_repository)
+
+        order_repository = OrderRepository(database=self.database)
+        self.order_service = OrderService(repository=order_repository)
 
     @staticmethod
     async def application_startup(application: "Application") -> None:
@@ -69,6 +77,7 @@ def configure_logging():
 
 def create_app(app_settings: AppSettings) -> Application:
     application = (ApplicationBuilder().application_class(Application, kwargs={"app_settings": app_settings}).
+                   arbitrary_callback_data(True).    # type: ignore[arg-type]
                    post_init(Application.application_startup).    # type: ignore[arg-type]
                    post_shutdown(Application.application_shutdown).    # type: ignore[arg-type]
                    token(app_settings.TELEGRAM_API_KEY.get_secret_value()).build())
