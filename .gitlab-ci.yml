@@ -2,6 +2,8 @@ stages:
   - build
 build:
   stage: build
+  tags:
+    - yandex
   # Using kanika to create a container inside the container for enhanced security
   image:
     name: gcr.io/kaniko-project/executor:v1.6.0-debug
