@@ -1,18 +1,15 @@
 stages:
   - build
+
 build:
   stage: build
   image:
     name: gcr.io/kaniko-project/executor:v1.6.0-debug
     entrypoint: [""]
-  before_script:
-    # Устанавливаем jq через apt (так как в debug-образе Kaniko используется Debian)
-    - apt-get update && apt-get install -y jq
   script:
     - mkdir -p /kaniko/.docker
-    # Создаем правильный конфиг для аутентификации
-    - echo "$CI_REGISTRY_KEY" > /Users/georgijpavlov/key.json
-    - echo "{\"auths\":{\"$CI_REGISTRY\":{\"username\":\"json_key\",\"password\":$(cat /tmp/key.json | jq -c .)}}}" > /kaniko/.docker/config.json
+    # Используем базовые Unix-утилиты для обработки JSON
+    - echo "{\"auths\":{\"$CI_REGISTRY\":{\"username\":\"json_key\",\"password\":\"$(echo "$CI_REGISTRY_KEY" | sed 's/"/\\"/g')\"}}}" > /kaniko/.docker/config.json
     - /kaniko/executor
       --context "${CI_PROJECT_DIR}"
       --dockerfile "${CI_PROJECT_DIR}/Dockerfile"
