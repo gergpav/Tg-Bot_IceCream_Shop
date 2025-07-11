@@ -4,15 +4,23 @@ stages:
 build:
   stage: build
   image:
-    name: gcr.io/kaniko-project/executor:v1.6.0-debug
+    name: gcr.io/kaniko-project/executor:v1.9.1-debug  # Обновленная версия
     entrypoint: [""]
   script:
     - mkdir -p /kaniko/.docker
-    # Самый простой способ - передать ключ как есть, без обработки
-    - echo "{\"auths\":{\"$CI_REGISTRY\":{\"username\":\"json_key\",\"password\":\"${CI_REGISTRY_KEY}\"}}}" > /kaniko/.docker/config.json
-    - echo "Generated config.json:"
+    # Правильное формирование config.json с экранированием
+    - echo "$CI_REGISTRY_KEY" > /Users/georgijpavlov/key.json
+    - printf '{"auths":{"%s":{"username":"json_key","password":%s}}' \
+        "$CI_REGISTRY" \
+        "$(cat /Users/georgijpavlov/key.json | tr -d '\n' | sed 's/"/\\"/g')" \
+        > /kaniko/.docker/config.json
+    # Проверка сформированного файла
+    - echo "=== Config.json содержимое ==="
     - cat /kaniko/.docker/config.json
+    - echo "============================"
+    # Запуск Kaniko с флагом --force
     - /kaniko/executor
+      --force
       --context "${CI_PROJECT_DIR}"
       --dockerfile "${CI_PROJECT_DIR}/Dockerfile"
       --destination "${CI_REGISTRY}/${CI_PROJECT_PATH}:${CI_COMMIT_SHORT_SHA}"
