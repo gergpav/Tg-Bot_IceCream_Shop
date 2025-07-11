@@ -6,11 +6,13 @@ build:
     name: gcr.io/kaniko-project/executor:v1.6.0-debug
     entrypoint: [""]
   before_script:
-    - apk add --no-cache jq  # Установка утилиты для работы с JSON
+    # Устанавливаем jq через apt (так как в debug-образе Kaniko используется Debian)
+    - apt-get update && apt-get install -y jq
   script:
     - mkdir -p /kaniko/.docker
-    # Правильный формат конфига для Yandex CR
-    - echo "{\"auths\":{\"$CI_REGISTRY\":{\"username\":\"json_key\",\"password\":$(echo "$CI_REGISTRY_KEY" | jq -c .)}}}" > /kaniko/.docker/config.json
+    # Создаем правильный конфиг для аутентификации
+    - echo "$CI_REGISTRY_KEY" > /tmp/key.json
+    - echo "{\"auths\":{\"$CI_REGISTRY\":{\"username\":\"json_key\",\"password\":$(cat /tmp/key.json | jq -c .)}}}" > /kaniko/.docker/config.json
     - /kaniko/executor
       --context "${CI_PROJECT_DIR}"
       --dockerfile "${CI_PROJECT_DIR}/Dockerfile"
