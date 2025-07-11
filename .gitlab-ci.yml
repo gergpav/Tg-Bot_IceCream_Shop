@@ -8,8 +8,8 @@ build:
     entrypoint: [""]
   script:
     - mkdir -p /kaniko/.docker
-    # Используем базовые Unix-утилиты для обработки JSON
-    - echo "{\"auths\":{\"$CI_REGISTRY\":{\"username\":\"json_key\",\"password\":\"$(echo "$CI_REGISTRY_KEY" | sed 's/"/\\"/g')\"}}}" > /kaniko/.docker/config.json
+    # Самый простой способ - передать ключ как есть, без обработки
+    - echo "{\"auths\":{\"$CI_REGISTRY\":{\"username\":\"json_key\",\"password\":\"${CI_REGISTRY_KEY}\"}}}" > /kaniko/.docker/config.json
     - /kaniko/executor
       --context "${CI_PROJECT_DIR}"
       --dockerfile "${CI_PROJECT_DIR}/Dockerfile"
