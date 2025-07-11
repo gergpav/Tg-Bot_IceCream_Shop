@@ -11,7 +11,7 @@ build:
   script:
     - mkdir -p /kaniko/.docker
     # Создаем правильный конфиг для аутентификации
-    - echo "$CI_REGISTRY_KEY" > /tmp/key.json
+    - echo "$CI_REGISTRY_KEY" > /Users/georgijpavlov/key.json
     - echo "{\"auths\":{\"$CI_REGISTRY\":{\"username\":\"json_key\",\"password\":$(cat /tmp/key.json | jq -c .)}}}" > /kaniko/.docker/config.json
     - /kaniko/executor
       --context "${CI_PROJECT_DIR}"
