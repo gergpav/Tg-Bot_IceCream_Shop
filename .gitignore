@@ -5,3 +5,4 @@ Python
 /settings/.envs/.env
 alembic.ini
 /alembic
+__pycache__/
