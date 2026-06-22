@@ -47,10 +47,10 @@ deploy:
   - echo "${CI_REGISTRY_KEY}" > key.json
   - yc config set service-account-key key.json
   - yc compute instance create-with-container
-    --name telegram-bot-vm --zone ru-central1-b --folder-id b1g5kgfqtikk024tvq81
+    --name bot-instance --zone ru-central1-b --folder-id b1g5kgfqtikk024tvq81
     --public-ip=true --create-boot-disk size=30 --service-account-name telegram-bot
     --docker-compose-file docker-compose.prod.yml || true
-  - yc compute instance update-container --name telegram-bot-vm --folder-id b1g5kgfqtikk024tvq81
+  - yc compute instance update-container --name bot-instance --folder-id b1g5kgfqtikk024tvq81
     --docker-compose-file docker-compose.prod.yml
 
   tags:
