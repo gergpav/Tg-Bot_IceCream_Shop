@@ -41,7 +41,8 @@ deploy:
   - apt-get update && apt-get install -y curl
   - curl -sSL https://storage.yandexcloud.net/yandexcloud-yc/install.sh | bash
   - export PATH=${PATH}:/root/yandex-cloud/bin/
-  - curl -sSL https://raw.githubusercontent.com/test-always-included/mo/master/mo -o mo && chmod +x mo
+  - curl -fsSL https://raw.githubusercontent.com/tests-always-included/mo/3.1.0/mo -o mo && chmod +x mo
+  - head -n1 mo | grep -q '^#!' || { echo "mo download is not a script:"; cat mo; exit 1; }
   - ./mo docker-compose.prod.yml.template > docker-compose.prod.yml
   - echo "${CI_REGISTRY_KEY}" > key.json
   - yc config set service-account-key key.json
