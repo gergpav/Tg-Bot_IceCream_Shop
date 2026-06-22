@@ -19,3 +19,34 @@ build:
       --verbosity=debug
   tags:
     - build
+
+deploy:
+  image: mirror.gcr.io/ubuntu
+  stage: deploy
+  variables:
+    ADMIN_INTERFACE_PORT: $ADMIN_INTERFACE_PORT
+    ADMIN_LOGIN: $ADMIN_LOGIN
+    ADMIN_PASSWORD: $ADMIN_PASSWORD
+
+    TELEGRAM_API_KEY: $TELEGRAM_API_KEY
+
+    POSTGRES_SERVER: $POSTGRES_SERVER
+    POSTGRES_PORT: $POSTGRES_PORT
+    POSTGRES_DB: $POSTGRES_DB
+    POSTGRES_USER: $POSTGRES_USER
+    POSTGRES_PASSWORD: $POSTGRES_PASSWORD
+
+  script:
+  - apt-get update && apt-get install -y curl
+  - curl -sSL https://storage.yandexcloud.net/yandexcloud-yc/install.sh | bash
+  - export PATH=${PATH}:/root/yandex-cloud/bin/
+  - curl -sSL https://raw.githubusercontent.com/test-always-included/mo/master/mo -o mo && chmod +x mo
+  - ./mo docker-compose.prod.yml.template > docker-compose.prod.yml
+  - echo "${CI_REGISTRY_KEY}" > key.json
+  - yc config set service-account-key key.json
+  - yc compute instance create-with-container
+    --name telegram-bot-vm --zone ru-central1-b --folder-id b1g5kgfqtikk024tvq81
+    --public-ip=true --create-boot-disk size=30 --service-account-name telegram-bot
+    --docker-compose-file docker-compose.prod.yml || true
+  - yc compute instance update-container --name telegram-bot-vm --folder-id b1g5kgfqtikk024tvq81
+    --docker-compose-file docker-compose.prod.yml

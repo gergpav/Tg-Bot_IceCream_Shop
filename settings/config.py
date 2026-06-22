@@ -1,6 +1,8 @@
 import os
+from urllib.parse import quote
 
-from pydantic import SecretStr, PostgresDsn, Secret
+from pydantic import SecretStr, PostgresDsn, Secret, computed_field
+from pydantic_core import MultiHostUrl
 from pydantic_settings import BaseSettings, SettingsConfigDict
 
 
@@ -10,9 +12,35 @@ class AppSettings(BaseSettings):
     TELEGRAM_API_KEY: SecretStr = SecretStr("secret")
     LOG_LEVEL: str = "INFO"
 
-    POSTGRES_DSN: Secret[PostgresDsn] = Secret(
-        PostgresDsn("postgresql+asyncpg://postgres:yhbujnikmol%2C1@localhost:5432/postgres")
-    )# Example DSN, replace with your actual DSN
+    POSTGRES_SERVER: str = "localhost"
+    POSTGRES_PORT: int = 5432
+    POSTGRES_USER: str = "postgres"
+    POSTGRES_PASSWORD: str = "yhbujnikmol,1"
+    POSTGRES_DB: str = "postgres"
+
+    @computed_field
+    @property
+    def POSTGRES_DSN(self) -> PostgresDsn:
+        return Secret(MultiHostUrl.build(
+            scheme="postgresql+asyncpg",
+            username=quote(self.POSTGRES_USER, safe=""),
+            password=quote(self.POSTGRES_PASSWORD, safe=""),
+            host=self.POSTGRES_SERVER,
+            port=self.POSTGRES_PORT,
+            path=self.POSTGRES_DB
+        ))
+
+    @computed_field
+    @property
+    def PERSISTENCE_POSTGRES_DSN(self) -> PostgresDsn:
+        return Secret(MultiHostUrl.build(
+            scheme="postgresql",
+            username=quote(self.POSTGRES_USER, safe=""),
+            password=quote(self.POSTGRES_PASSWORD, safe=""),
+            host=self.POSTGRES_SERVER,
+            port=self.POSTGRES_PORT,
+            path=self.POSTGRES_DB
+        ))
 
     ADMIN_INTERFACE_PORT: int = 8001
     ADMIN_SECRET_KEY: SecretStr = SecretStr("secretkey")

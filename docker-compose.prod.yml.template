@@ -1,0 +1,44 @@
+services:
+    db:
+        image: postgres:16.3
+        volumes:
+            - postgres:/var/lib/postgresql
+        environment:
+            POSTGRES_USER: {{POSTGRES_USER}}
+            POSTGRES_PASSWORD: {{POSTGRES_PASSWORD}}
+            POSTGRES_DB: {{POSTGRES_DB}}
+        restart: always
+    bot:
+        image: cr.yandex/crp0rgrkmoar92l1kspr/icecream_shop/tg-bot-icecream-shop:latest
+        environment:
+            TELEGRAM_API_KEY: {{TELEGRAM_API_KEY}}
+            POSTGRES_SERVER: db
+            POSTGRES_PORT: {{POSTGRES_PORT}}
+            POSTGRES_DB: {{POSTGRES_DB}}
+            POSTGRES_USER: {{POSTGRES_USER}}
+            POSTGRES_PASSWORD: {{POSTGRES_PASSWORD}}
+        command: poetry run -m app.main
+        depends_on:
+            - db
+        restart: always
+    admin: 
+        image: cr.yandex/crp0rgrkmoar92l1kspr/icecream_shop/tg-bot-icecream-shop:latest
+        ports:
+            - {{ADMIN_INTERFACE_PORT}}:{{ADMIN_INTERFACE_PORT}}
+        environment:
+            TELEGRAM_API_KEY: {{TELEGRAM_API_KEY}}
+            POSTGRES_SERVER: db
+            POSTGRES_PORT: {{POSTGRES_PORT}}
+            POSTGRES_DB: {{POSTGRES_DB}}
+            POSTGRES_USER: {{POSTGRES_USER}}
+            POSTGRES_PASSWORD: {{POSTGRES_PASSWORD}}
+            ADMIN_LOGIN: {{ADMIN_LOGIN}}
+            ADMIN_PASSWORD: {{ADMIN_PASSWORD}}
+            ADMIN_INTERFACE_PORT: {{ADMIN_INTERFACE_PORT}}
+        command: poetry run python -m app.admin.main
+        depends_on:
+            - db
+        restart: always
+volumes:
+    postgres:
+    
