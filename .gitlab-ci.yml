@@ -17,6 +17,7 @@ build:
       --context "${CI_PROJECT_DIR}"
       --dockerfile "${CI_PROJECT_DIR}/Dockerfile"
       --destination "${CI_REGISTRY}/${CI_PROJECT_PATH}:${CI_COMMIT_SHORT_SHA}"
+      --destination "${CI_REGISTRY}/${CI_PROJECT_PATH}:latest"
       --verbosity=debug
   tags:
     - build
