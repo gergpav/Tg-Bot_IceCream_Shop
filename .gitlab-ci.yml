@@ -51,3 +51,6 @@ deploy:
     --docker-compose-file docker-compose.prod.yml || true
   - yc compute instance update-container --name telegram-bot-vm --folder-id b1g5kgfqtikk024tvq81
     --docker-compose-file docker-compose.prod.yml
+
+  tags:
+    - deploy
