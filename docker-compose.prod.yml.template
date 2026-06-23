@@ -9,7 +9,7 @@ services:
             POSTGRES_DB: {{POSTGRES_DB}}
         restart: always
     bot:
-        image: cr.yandex/crp0rgrkmoar92l1kspr/icecream_shop/tg-bot-icecream-shop:latest
+        image: cr.yandex/crp0rgrkmoar92l1kspr/icecream_shop/tg-bot-icecream-shop:{{CI_COMMIT_SHORT_SHA}}
         environment:
             TELEGRAM_API_KEY: {{TELEGRAM_API_KEY}}
             POSTGRES_SERVER: db
@@ -21,8 +21,8 @@ services:
         depends_on:
             - db
         restart: always
-    admin: 
-        image: cr.yandex/crp0rgrkmoar92l1kspr/icecream_shop/tg-bot-icecream-shop:latest
+    admin:
+        image: cr.yandex/crp0rgrkmoar92l1kspr/icecream_shop/tg-bot-icecream-shop:{{CI_COMMIT_SHORT_SHA}}
         ports:
             - {{ADMIN_INTERFACE_PORT}}:{{ADMIN_INTERFACE_PORT}}
         environment:

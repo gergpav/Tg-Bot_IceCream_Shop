@@ -36,7 +36,7 @@ if __name__ == "__main__":
     settings = AppSettings()
     uvicorn.run(
         "app.admin.main:create_app",
-        host="localhost",
+        host="0.0.0.0",
         port=settings.ADMIN_INTERFACE_PORT,
         log_level="info",
         workers=1,
